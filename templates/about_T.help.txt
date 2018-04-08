@@ -1,0 +1,11 @@
+﻿PSTOPIC
+    about_<%=$PLASTER_PARAM_ModuleName%>
+
+SHORT DESCRIPTION
+    A short description.
+
+LONG DESCRIPTION
+    A longer description.
+
+DETAILED DESCRIPTION
+    A longer more detailed description.

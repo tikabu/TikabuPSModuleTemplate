@@ -1,0 +1,108 @@
+﻿// Available variables which can be used inside of strings:
+// ${workspaceFolder} the path of the workspace folder that contains the tasks.json file
+// ${workspaceFolderBasename} the name of the workspace folder that contains the tasks.json file without any slashes (/)
+// ${file} the current opened file
+// ${relativeFile} the current opened file relative to the workspace folder containing the file
+// ${fileBasename} the current opened file's basename
+// ${fileBasenameNoExtension} the current opened file's basename without the extension
+// ${fileDirname} the current opened file's dirname
+// ${fileExtname} the current opened file's extension
+// ${cwd} the task runner's current working directory on startup
+// ${lineNumber} the current selected line number in the active file
+{
+  "version": "2.0.0",
+  "windows": {
+    "options": {
+      "shell": {
+        "executable": "powershell.exe",
+        "args": [ "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command" ]
+      }
+    }
+  },
+  "linux": {
+    "options": {
+      "shell": {
+        "executable": "/usr/bin/pwsh",
+        "args": [ "-NoProfile", "-Command" ]
+      }
+    }
+  },
+  "osx": {
+    "options": {
+      "shell": {
+        "executable": "/usr/local/bin/pwsh",
+        "args": [ "-NoProfile", "-Command" ]
+      }
+    }
+  },
+  "tasks": [
+    {
+      "label": "Test",
+      "type": "shell",
+      "problemMatcher": [ "$msCompile" ],
+      "command": "Invoke-Build -Task Test",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": ".",
+      "type": "shell",
+      "problemMatcher": [ "$msCompile" ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "command": "Invoke-Build -Task ."
+    },
+    {
+      "label": "InstallDependencies",
+      "type": "shell",
+      "problemMatcher": [ "$msCompile" ],
+      "command": "Invoke-Build -Task InstallDependencies"
+    },
+    {
+      "label": "Clean",
+      "type": "shell",
+      "problemMatcher": [ "$msCompile" ],
+      "command": "Invoke-Build -Task Clean"
+    },
+    {
+      "label": "Analyze",
+      "type": "shell",
+      "problemMatcher": [ "$msCompile" ],
+      "command": "Invoke-Build -Task Analyze"
+    },
+    {
+      "label": "RunTests",
+      "type": "shell",
+      "problemMatcher": [ "$msCompile" ],
+      "command": "Invoke-Build -Task RunTests"
+    },
+    {
+      "label": "ConfirmTestsPassed",
+      "type": "shell",
+      "problemMatcher": [ "$msCompile" ],
+      "command": "Invoke-Build -Task ConfirmTestsPassed"
+    },
+    {
+      "label": "Publish",
+      "type": "shell",
+      "problemMatcher": [ "$msCompile" ],
+      "command": "Invoke-Build -Task Publish"
+    },
+    {
+      "label": "PublishNuget",
+      "type": "shell",
+      "problemMatcher": [ "$msCompile" ],
+      "command": "Invoke-Build -Task PublishNuget"
+    },
+    {
+      "label": "?",
+      "type": "shell",
+      "problemMatcher": [],
+      "command": "Invoke-Build -Task ?"
+    }
+  ]
+}

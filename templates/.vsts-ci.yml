@@ -1,0 +1,51 @@
+queue: Hosted VS2017
+steps:
+- task: NuGetToolInstaller@0
+  displayName: Use NuGet 4.x
+  inputs:
+    versionSpec: 4.x
+    checkLatest: false
+- task: NuGetCommand@2
+  displayName: NuGet Restore
+  inputs:
+    command: restore
+    feedRestore: <%=$PLASTER_PARAM_VstsPmRepoName%>
+    includeNuGetOrg: false
+    packagesDirectory: ./packages
+    verbosityRestore: Detailed
+    solution: "**/packages.config"
+    nuGetFeedType: internal
+- powershell: |
+    Install-PackageProvider -Name NuGet -Force -Scope CurrentUser
+    Install-Module -Name InvokeBuild -Force -Scope CurrentUser
+    Install-Module -Name Pester -Force -Scope CurrentUser -SkipPublisherCheck
+  displayName: Install Invoke-Build and update Pester
+- powershell: Invoke-Build InstallDependencies, Test, PublishNuget
+  displayName: Invoke Build
+- task: NuGetCommand@2
+  displayName: NuGet Push
+  inputs:
+    command: push
+    feedPublish: <%=$PLASTER_PARAM_VstsPmRepoName%>
+    includeNuGetOrg: false
+    packagesDirectory: ./packages
+    verbosityRestore: Detailed
+    searchPatternPush: "$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg"
+    nuGetFeedType: internal
+    verbosityPush: Detailed
+    outputDir: "$(Build.ArtifactStagingDirectory)"
+- task: PublishTestResults@2
+  displayName: "Publish Test Results **/TestResults*.xml"
+  condition: succeededOrFailed()
+  inputs:
+    testRunner: NUnit
+    testResultsFiles: "**/TestResults*.xml"
+    searchFolder: "$(System.DefaultWorkingDirectory)"
+    mergeTestResults: false
+    publishRunAttachments: true
+- task: PublishCodeCoverageResults@1
+  displayName: "Publish code coverage from **/CodeCoverageResults*.xml"
+  inputs:
+    codeCoverageTool: JaCoCo
+    summaryFileLocation: "**/CodeCoverageResults*.xml"
+    failIfCoverageEmpty: false
