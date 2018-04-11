@@ -143,7 +143,7 @@ You can run the Pester tests in your project by executing the 'test' task.  Pres
 
         <message>
 You can register your VSTS Package Manager feed with PowerShell using the command 
-Register-PSRepository -Name PmFeed -SourceLocation 'https://&lt;VstsId&gt;.pkgs.visualstudio.com/_packaging/&lt;PackageFeedName&gt;/nuget/v2' -InstallationPolicy Trusted
+Register-PSRepository -Name $PLASTER_PARAM_VstsPmRepoName -SourceLocation 'https://&lt;VstsId&gt;.pkgs.visualstudio.com/_packaging/$PLASTER_PARAM_VstsPmRepoName/nuget/v2' -InstallationPolicy Trusted
         </message>
   </content>
 </plasterManifest>
