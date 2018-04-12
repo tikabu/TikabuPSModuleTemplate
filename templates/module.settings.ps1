@@ -1,8 +1,10 @@
 ﻿# Settings for build.
 param(
     $Artifacts = './artifacts',
+    $Packages = './packages',
     $ModuleName = '<%=$PLASTER_PARAM_ModuleName%>',
     $ModulePath = '.\<%=$PLASTER_PARAM_ModuleName%>',
+    $Lib = "$ModulePath\Lib",
     $BuildNumber = $env:BUILD_BUILDID,
     $PercentCompliance = '50'
 )

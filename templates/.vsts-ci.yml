@@ -9,7 +9,7 @@ steps:
   displayName: NuGet Restore
   inputs:
     command: restore
-    feedRestore: <%=$PLASTER_PARAM_VstsPmRepoName%>
+    feedRestore: <%=$PLASTER_PARAM_VstsPmRepoNameBin%>
     includeNuGetOrg: false
     packagesDirectory: ./packages
     verbosityRestore: Detailed
@@ -26,7 +26,7 @@ steps:
   displayName: NuGet Push
   inputs:
     command: push
-    feedPublish: <%=$PLASTER_PARAM_VstsPmRepoName%>
+    feedPublish: <%=$PLASTER_PARAM_VstsPmRepoNameModule%>
     includeNuGetOrg: false
     packagesDirectory: ./packages
     verbosityRestore: Detailed

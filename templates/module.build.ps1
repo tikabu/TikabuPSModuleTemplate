@@ -13,7 +13,7 @@ task . Test, PublishNuget
 #Synopsis: Install dependencies.
 task InstallDependencies {
     if (Get-Command nuget.exe -ErrorAction SilentlyContinue) {
-        nuget restore -source <%=$PLASTER_PARAM_VstsPmRepoName%> -outputdirectory packages
+        nuget restore -source <%=$PLASTER_PARAM_VstsPmRepoNameBin%> -outputdirectory packages
     }
     if (!(Test-Path $ModulePath\lib)) {
         mkdir $ModulePath\lib
@@ -23,17 +23,21 @@ task InstallDependencies {
 
 #Synopsis: Clean Artifact directory.
 task Clean {
-    
+
     if (Test-Path -Path $Artifacts) {
         Remove-Item "$Artifacts/*" -Recurse -Force
     }
 
     New-Item -ItemType Directory -Path $Artifacts -Force
-
-    if (!(Test-Path -Path .\PSTestReport)) {
-        & git clone https://github.com/Xainey/PSTestReport.git
-    }
     
+    if (Test-Path -Path $Packages) {
+        Remove-Item "$Packages/*" -Recurse -Force
+    }
+
+    if (Test-Path -Path $Lib) {
+        Remove-Item "$Lib/*" -Recurse -Force
+    }
+        
 }
 
 #Synopsis: Analyze code.
@@ -68,19 +72,6 @@ task RunTests {
 
     $testResults | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $Artifacts "PesterResults.json")
 
-    $options = @{
-        BuildNumber = $BuildNumber
-        GitRepo = $Settings.GitRepo
-        GetRepoUrl = $Settings.ProjectUrl
-        CiURL = $Settings.CiURL
-        ShowHitCommands = $true
-        Compliance = ($PercentCompliance / 100)
-        ScriptAnalyzerFile = (Join-Path $Artifacts "ScriptAnalysisResults.json")
-        PesterFile = (Join-Path $Artifacts "PesterResults.json")
-        OutputDir = "$Artifacts"
-    }
-
-    . ".\PSTestReport\Invoke-PSTestReport.ps1" @options
 }
 
 #Synopsis: Confirm that tests passed.
