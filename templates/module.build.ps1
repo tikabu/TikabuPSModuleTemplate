@@ -30,13 +30,6 @@ task Clean {
 
     New-Item -ItemType Directory -Path $Artifacts -Force
     
-    if (Test-Path -Path $Packages) {
-        Remove-Item "$Packages/*" -Recurse -Force
-    }
-
-    if (Test-Path -Path $Lib) {
-        Remove-Item "$Lib/*" -Recurse -Force
-    }
         
 }
 
