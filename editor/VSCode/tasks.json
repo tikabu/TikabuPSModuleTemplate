@@ -56,12 +56,18 @@
       },
       "command": "Invoke-Build -Task ."
     },
+<%
+if ($PLASTER_PARAM_Binaries -eq 'Yes') {
+@'
     {
       "label": "InstallDependencies",
       "type": "shell",
       "problemMatcher": [ "$msCompile" ],
       "command": "Invoke-Build -Task InstallDependencies"
     },
+'@
+}
+%>
     {
       "label": "Clean",
       "type": "shell",

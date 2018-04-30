@@ -5,11 +5,14 @@
 . './build_utils.ps1'
 
 #Synopsis: Run/Publish Tests and Fail Build on Error.
-task Test Clean, InstallDependencies, RunTests, ConfirmTestsPassed
+task Test Clean<%=if ($PLASTER_PARAM_Binaries -eq 'Yes') {", InstallDependencies"}%>, RunTests, ConfirmTestsPassed
 
 #Synopsis: Run full Pipeline.
 task . Test, PublishNuget
 
+<%
+if ($PLASTER_PARAM_Binaries -eq 'Yes') {
+@"
 #Synopsis: Install dependencies.
 task InstallDependencies {
     if (Get-Command nuget.exe -ErrorAction SilentlyContinue) {
@@ -20,7 +23,9 @@ task InstallDependencies {
     }
     get-item .\packages\**\lib\* | copy-item -Destination $ModulePath\lib
 }
-
+"@
+}
+%>
 #Synopsis: Clean Artifact directory.
 task Clean {
 

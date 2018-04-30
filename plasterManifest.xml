@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<plasterManifest schemaVersion="1.1"
+<plasterManifest schemaVersion="1.1.0"
                  templateType="Project"
                  xmlns="http://www.microsoft.com/schemas/PowerShell/Plaster/v1">
   <metadata>
@@ -47,16 +47,32 @@
                     value="VSTS"/>
         </parameter>
 
+        <parameter condition="$PLASTER_PARAM_Build -eq 'VSTS'"
+                   name='Binaries'
+                   type='choice'
+                   prompt='Does your module include binaries?:'
+                   default='0'
+                   store='text' >
+            <choice label='&amp;No'
+                    help="No binaries."
+                    value="No"/>
+            <choice label='&amp;Yes'
+                    help="Module includes binaries."
+                    value="Yes"/>
+        </parameter>
+
         <parameter name='FullName'
            type='user-fullname'
            prompt='Enter your full name'
            store='text' />
 
-        <parameter name='VstsPmRepoNameBin'
+        <parameter condition="$PLASTER_PARAM_Build -eq 'VSTS' -and $PLASTER_PARAM_Binaries -eq 'Yes'"
+                   name='VstsPmRepoNameBin'
                    type='text'
                    prompt='Enter the name of VSTS Package Manager Binary Repo'/>
 
-        <parameter name='VstsPmRepoNameModule'
+        <parameter condition="$PLASTER_PARAM_Build -eq 'VSTS'"
+                   name='VstsPmRepoNameModule'
                    type='text'
                    prompt='Enter the name of VSTS Package Manager Module Repo'/>
   </parameters>
@@ -102,7 +118,7 @@
               source='editor\VSCode\settings.json'
               destination='${PLASTER_PARAM_ModuleName}\.vscode\settings.json' />
 
-        <file condition="$PLASTER_PARAM_Editor -eq 'VSCode'"
+        <templateFile condition="$PLASTER_PARAM_Editor -eq 'VSCode'"
               source='editor\VSCode\tasks.json'
               destination='${PLASTER_PARAM_ModuleName}\.vscode\tasks.json' />
 
@@ -122,7 +138,7 @@
               source='templates\module.settings.ps1'
               destination='${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.settings.ps1' />
 
-        <file condition="$PLASTER_PARAM_Build -eq 'VSTS'"
+        <file condition="$PLASTER_PARAM_Build -eq 'VSTS' -and $PLASTER_PARAM_Binaries -eq 'Yes'"
               source='templates\packages.config'
               destination='${PLASTER_PARAM_ModuleName}\packages.config' />
 
@@ -132,6 +148,9 @@
 
         <requireModule name="Pester" minimumVersion="4.0.3"
             message="Without Pester, you will not be able to run the provided Pester test to validate your module manifest file.`nWithout version 4.0.3, VS Code will not display Pester warnings and errors in the Problems panel."/>
+
+        <requireModule name="InvokeBuild" minimumVersion="5.3.0"
+            message="Without InvokeBuild, you will not be able to run the provided build tasks."/>
 
         <message>
 
