@@ -5,6 +5,9 @@ steps:
   inputs:
     versionSpec: 4.x
     checkLatest: false
+<%
+if ($PLASTER_PARAM_Binaries -eq 'Yes') {
+@'
 - task: NuGetCommand@2
   displayName: NuGet Restore
   inputs:
@@ -15,12 +18,15 @@ steps:
     verbosityRestore: Detailed
     solution: "**/packages.config"
     nuGetFeedType: internal
+'@
+}
+%>
 - powershell: |
     Install-PackageProvider -Name NuGet -Force -Scope CurrentUser
     Install-Module -Name InvokeBuild -Force -Scope CurrentUser
     Install-Module -Name Pester -Force -Scope CurrentUser -SkipPublisherCheck
   displayName: Install Invoke-Build and update Pester
-- powershell: Invoke-Build InstallDependencies, Test, PublishNuget
+- powershell: Invoke-Build <%=if ($PLASTER_PARAM_Binaries -eq 'Yes') {"InstallDependencies, "}%>Test, PublishNuget
   displayName: Invoke Build
 - task: NuGetCommand@2
   displayName: NuGet Push
