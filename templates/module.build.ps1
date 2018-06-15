@@ -103,13 +103,20 @@ task Publish {
 task PublishNuget {
     $newVersion = New-Object version -ArgumentList 1, 0, 0, $BuildNumber
     "Version is $newVersion"
-    $Public  = @(Get-ChildItem -Path $ModulePath\Public\*.ps1 -ErrorAction SilentlyContinue)
-    $Functions = $public.basename
-    Update-ModuleManifest -Path $ModulePath\$ModuleName.psd1 -ModuleVersion $newVersion -FunctionsToExport $Functions
+    $PublicScriptPath = "$ModulePath\Public"
+    $psFilter = "*.ps1"
+    $functions = ( Get-ChildItem -Path $PublicScriptPath -Filter $psFilter -Recurse -ErrorAction SilentlyContinue | Select-String -Pattern "function" )
+    $exportFunctions = @()
+    foreach ($func in $functions) {
+        $x = $func.Line -replace 'function '
+        $x = $x -replace ' {'
+        $exportFunctions += $x
+    }
+    Update-ModuleManifest -Path $ModulePath\$ModuleName.psd1 -ModuleVersion $newVersion -FunctionsToExport $exportFunctions
 
     $t = [xml] (Get-Content .\$ModuleName.nuspec)
     $t.package.metadata.version = $newVersion.ToString()
     $t.Save(".\$ModuleName.nuspec")
-    
-    nuget pack $ModuleName.nuspec -basepath $ModulePath -NoPackageAnalysis -outputdirectory $ENV:Build_ArtifactStagingDirectory
+
+    #nuget pack $ModuleName.nuspec -basepath $ModulePath -NoPackageAnalysis -outputdirectory $ENV:Build_ArtifactStagingDirectory
 }
