@@ -5,7 +5,7 @@
   <metadata>
     <name>TikabuPowerShellModule</name>
     <id>b5424f4c-ff73-46a5-9608-6b399f400339</id>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <title>Tikabu PowerShell Manifest Module</title>
     <description>Creates files for a PowerShell script module.</description>
     <author>Plaster</author>

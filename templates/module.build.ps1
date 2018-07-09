@@ -18,10 +18,10 @@ task InstallDependencies {
     if (Get-Command nuget.exe -ErrorAction SilentlyContinue) {
         nuget restore -source <%=$PLASTER_PARAM_VstsPmRepoNameBin%> -outputdirectory packages
     }
-    if (!(Test-Path $ModulePath\lib)) {
-        mkdir $ModulePath\lib
+    if (!(Test-Path `$ModulePath\lib)) {
+        mkdir `$ModulePath\lib
     }
-    get-item .\packages\**\lib\* | copy-item -Destination $ModulePath\lib
+    get-item .\packages\**\lib\* | copy-item -Destination `$ModulePath\lib
 }
 "@
 }
