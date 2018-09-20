@@ -12,7 +12,7 @@ task . Test, PublishNuget
 
 <%
 if ($PLASTER_PARAM_Binaries -eq 'Yes') {
-@"
+    @"
 #Synopsis: Install dependencies.
 task InstallDependencies {
     if (Get-Command nuget.exe -ErrorAction SilentlyContinue) {
@@ -41,11 +41,11 @@ task Clean {
 #Synopsis: Analyze code.
 task Analyze {
     $scriptAnalyzerParams = @{
-        Path = $ModulePath
+        Path        = $ModulePath
         ExcludeRule = @('PSPossibleIncorrectComparisonWithNull', 'PSUseToExportFieldsInManifest')
-        Severity = @('Error', 'Warning')
-        Recurse = $true
-        Verbose = $false
+        Severity    = @('Error', 'Warning')
+        Recurse     = $true
+        Verbose     = $false
     }
 
     $saResults = Invoke-ScriptAnalyzer @scriptAnalyzerParams
@@ -56,13 +56,13 @@ task Analyze {
 #Synopsis: Run tests.
 task RunTests {
     $invokePesterParams = @{
-        OutputFile = (Join-Path $Artifacts "TestResults.xml")
-        OutputFormat = "NUnitXml"
-        Strict = $true
-        PassThru = $true
-        Verbose = $false
-        EnableExit = $false
-        CodeCoverage = (Get-ChildItem -Path "$ModulePath\*.ps1" -Exclude "*.Tests.*" -Recurse).FullName
+        OutputFile             = (Join-Path $Artifacts "TestResults.xml")
+        OutputFormat           = "NUnitXml"
+        Strict                 = $true
+        PassThru               = $true
+        Verbose                = $false
+        EnableExit             = $false
+        CodeCoverage           = (Get-ChildItem -Path "$ModulePath\*.ps1" -Exclude "*.Tests.*" -Recurse).FullName
         CodeCoverageOutputFile = (Join-Path $Artifacts "CodeCoverageResults.xml")
     }
 
@@ -91,9 +91,9 @@ task Publish {
     $moduleInfo = @{
         RepositoryName = $Settings.SMBRepositoryName
         RepositoryPath = $Settings.SMBRepositoryPath
-        ModuleName = $ModuleName
-        ModulePath = "$ModulePath\$ModuleName.psd1"
-        BuildNumber = $BuildNumber
+        ModuleName     = $ModuleName
+        ModulePath     = "$ModulePath\$ModuleName.psd1"
+        BuildNumber    = $BuildNumber
     }
 
     Publish-PSModule @moduleInfo -Verbose
@@ -103,8 +103,29 @@ task Publish {
 task PublishNuget {
     $newVersion = New-Object version -ArgumentList 1, 0, 0, $BuildNumber
     "Version is $newVersion"
-    $Public  = @(Get-ChildItem -Path $ModulePath\Public\*.ps1 -ErrorAction SilentlyContinue)
-    $Functions = $public.basename
+    $Public = @(Get-ChildItem -Path $ModulePath\Public\*.ps1 -Recurse -ErrorAction SilentlyContinue)
+    $exportFunctions = @()
+    foreach ($file in $Public) {
+
+        $tokens = $errors = $null
+        $ast = [System.Management.Automation.Language.Parser]::ParseFile(
+            $file.fullname,
+            [ref]$tokens,
+            [ref]$errors)
+    
+        $functionDefinitions = $ast.FindAll( {
+                param([System.Management.Automation.Language.Ast] $Ast)
+        
+                $Ast -is [System.Management.Automation.Language.FunctionDefinitionAst] -and
+                # Class methods have a FunctionDefinitionAst under them as well, but we don't want them.
+                ($PSVersionTable.PSVersion.Major -lt 5 -or
+                    $Ast.Parent -isnot [System.Management.Automation.Language.FunctionMemberAst])
+        
+            }, $true)
+    
+        $exportFunctions += $functionDefinitions.Name
+    }
+    $Functions = $exportFunctions
     Update-ModuleManifest -Path $ModulePath\$ModuleName.psd1 -ModuleVersion $newVersion -FunctionsToExport $Functions
 
     $t = [xml] (Get-Content .\$ModuleName.nuspec)
