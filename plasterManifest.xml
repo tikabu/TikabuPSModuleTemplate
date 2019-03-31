@@ -61,6 +61,20 @@
                     value="Yes"/>
         </parameter>
 
+        <parameter condition="$PLASTER_PARAM_Build -eq 'VSTS'"
+                   name='Artifact'
+                   type='choice'
+                   prompt='Do you want to create a build artifact?:'
+                   default='1'
+                   store='text' >
+            <choice label='&amp;No'
+                    help="No build artifact."
+                    value="No"/>
+            <choice label='&amp;Yes'
+                    help="Create build artifact."
+                    value="Yes"/>
+        </parameter>
+
         <parameter name='FullName'
            type='user-fullname'
            prompt='Enter your full name'
@@ -143,8 +157,8 @@
               destination='${PLASTER_PARAM_ModuleName}\packages.config' />
 
         <templateFile condition="$PLASTER_PARAM_Build -eq 'VSTS'"
-              source='templates\.vsts-ci.yml'
-              destination='${PLASTER_PARAM_ModuleName}\.vsts-ci.yml' />
+              source='templates\azure-pipelines.yml'
+              destination='${PLASTER_PARAM_ModuleName}\azure-pipelines.yml' />
 
         <requireModule name="Pester" minimumVersion="4.0.3"
             message="Without Pester, you will not be able to run the provided Pester test to validate your module manifest file.`nWithout version 4.0.3, VS Code will not display Pester warnings and errors in the Problems panel."/>
