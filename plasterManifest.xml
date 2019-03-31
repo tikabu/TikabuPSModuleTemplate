@@ -42,8 +42,8 @@
             <choice label='&amp;None'
                     help="No build pipeline."
                     value="None"/>
-            <choice label='Visual Studio &amp;Team Services'
-                    help="Use VSTS build pipeline with invoke-build."
+            <choice label='&amp;Azure DevOps'
+                    help="Use Azure DevOps build pipeline with invoke-build."
                     value="VSTS"/>
         </parameter>
 
@@ -69,12 +69,12 @@
         <parameter condition="$PLASTER_PARAM_Build -eq 'VSTS' -and $PLASTER_PARAM_Binaries -eq 'Yes'"
                    name='VstsPmRepoNameBin'
                    type='text'
-                   prompt='Enter the name of VSTS Package Manager Binary Repo'/>
+                   prompt='Enter the name of Azure DevOps Package Manager Binary Repo'/>
 
         <parameter condition="$PLASTER_PARAM_Build -eq 'VSTS'"
                    name='VstsPmRepoNameModule'
                    type='text'
-                   prompt='Enter the name of VSTS Package Manager Module Repo'/>
+                   prompt='Enter the name of Azure DevOps Package Manager Module Repo'/>
   </parameters>
 
   <content>
@@ -165,8 +165,8 @@ You can run the Pester tests in your project by executing the 'test' task.  Pres
         </message>
 
         <message>
-You can register your VSTS Package Manager feed with PowerShell using the command 
-Register-PSRepository -Name $PLASTER_PARAM_VstsPmRepoNameModule -SourceLocation 'https://&lt;VstsId&gt;.pkgs.visualstudio.com/_packaging/$PLASTER_PARAM_VstsPmRepoNameModule/nuget/v2' -InstallationPolicy Trusted
+You can register your Azure DevOps Package Manager feed with PowerShell using the command 
+Register-PSRepository -Name $PLASTER_PARAM_VstsPmRepoNameModule -SourceLocation 'https://pkgs.dev.azure.com/&lt;AzureDevOps Org Name&gt;/_packaging/$PLASTER_PARAM_VstsPmRepoNameModule/nuget/v2' -InstallationPolicy Trusted
         </message>
   </content>
 </plasterManifest>

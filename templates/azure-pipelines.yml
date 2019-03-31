@@ -1,3 +1,6 @@
+trigger:
+- master
+
 queue: Hosted VS2017
 steps:
 - task: NuGetToolInstaller@0
