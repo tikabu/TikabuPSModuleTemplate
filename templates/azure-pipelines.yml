@@ -57,6 +57,16 @@ if ($PLASTER_PARAM_Artifact -eq 'Yes') {
     #flattenFolders: false # Optional
     # Publish Build Artifacts
 # Publish build artifacts to Azure Pipelines/TFS or a file share
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '<%=$PLASTER_PARAM_ModuleName%>'
+    #includeRootFolder: true
+    #archiveType: 'zip' # Options: zip, 7z, tar, wim
+    #tarCompression: 'gz' # Optional. Options: gz, bz2, xz, none
+    archiveFile: '$(Build.ArtifactStagingDirectory)/<%=$PLASTER_PARAM_ModuleName%>/<%=$PLASTER_PARAM_ModuleName%>.zip'
+    #replaceExistingArchive: true
+    #verbose: # Optional
+    #quiet: # Optional
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)\<%=$PLASTER_PARAM_ModuleName%>'
