@@ -92,4 +92,5 @@ if ($PLASTER_PARAM_Artifact -eq 'Yes') {
   inputs:
     codeCoverageTool: JaCoCo
     summaryFileLocation: "**/CodeCoverageResults*.xml"
+    pathToSources: "$(System.DefaultWorkingDirectory)\<%=$PLASTER_PARAM_ModuleName%>"
     failIfCoverageEmpty: false
